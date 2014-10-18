@@ -1,6 +1,5 @@
 # Reproducible Research: Peer Assessment 1
 
-
 ## Loading and preprocessing the data
 ###Show any code that is needed to
 
@@ -109,6 +108,12 @@ The total number of missing values in the dataset is: 2304.
 
 ######2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
+Here I have decided to use the average steps taken for each interval to fill in missing data for an interval.
+In order to do this, using the already calculated data above, acitivty_daily this is merged with the original dataset activity
+and joined by interval. 
+
+A new column called stepsfill is created. Looping through the lenghth of the dataset, here  length of steps has been used to get the number,  the values are checked if is.na is true. If it is value is updated with the average for the interval which was already stored in the average column
+
 
 ######3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
@@ -145,19 +150,16 @@ The mean is 1.0766 &times; 10<sup>4</sup> and the median is 1.0766 &times; 10<su
 
 ```r
 df <- mutate(df,weekday=  wday(as.Date(df$date)) )
-df <- mutate(df, weekend = wday(as.Date(df$date)))
-df<- mutate(df, check = wday(as.Date(df$date)))
 
 for (i in 1:length(df$weekday))   
       {
         if (df$weekday[i] == 1 | df$weekday[i]== 7)
-          { df$weekday[i]=0
-            df$weekend[i]=1}
+          { df$weekday[i]="Weekend"
+           }
         if( df$weekday[i] ==2 | df$weekday[i]==3 | df$weekday[i]==4| df$weekday[i]==5| df$weekday[i]==6 )
-          {df$weekday[i]=1 
-           df$weekend[i]=0}
+          {df$weekday[i]="Weekday" 
+           }
            }   
- df$weekend <- as.factor(df$weekend)
  df$weekday <- as.factor(df$weekday)
 ```
 
@@ -168,15 +170,9 @@ library(lattice)
 avg <- summarise(group_by(df,interval,weekday),mean(steps, na.rm = TRUE))
 names(avg)[3]<- "Average"
 
-plot(avg$Average,avg$Interval, ylab="Number of steps",xlab="Interval",main="5-Minute interval vs Average steps taken", type ="l")
+xyplot(Average ~ interval|weekday,type="l",avg, groups= weekday,layout=c(1,2), ylab="Number of steps")
 ```
 
-![plot of chunk PanelPlot](./PeerAssignment1_files/figure-html/PanelPlot1.png) 
+![plot of chunk PanelPlot](./PeerAssignment1_files/figure-html/PanelPlot.png) 
 
-```r
-xyplot(Average ~ interval|weekday,type="l",avg, groups= weekday)
-```
-
-![plot of chunk PanelPlot](./PeerAssignment1_files/figure-html/PanelPlot2.png) 
-
-###There are differences in the average number of steps taken across weekdays and weekends
+#####There are differences in the average number of steps taken across weekdays and weekends
