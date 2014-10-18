@@ -1,5 +1,5 @@
 # Reproducible Research: Peer Assessment 1
-setwd("C:\\Users\\Audra\\Documents\\GitHub\\RepData_PeerAssessment1")
+
 
 ## Loading and preprocessing the data
 ###Show any code that is needed to
